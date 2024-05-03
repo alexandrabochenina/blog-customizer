@@ -11,6 +11,8 @@ import {backgroundColors} from  '../../constants/articleProps'
 import {contentWidthArr} from  '../../constants/articleProps'
 import { defaultArticleState } from '../../constants/articleProps';
 import { Separator } from '../separator';
+import { Text } from 'components/text';
+import { clsx } from 'clsx';
 
 type ArticleParamsState = {
 	open: boolean
@@ -45,18 +47,19 @@ const defaultState: () => ArticleParamsState = () => {
 }
 
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
-	const [state, setState] = useState(defaultState())
+	const [menuState, setMenuState] = useState(defaultState())
 	const containerRef = useRef<HTMLDivElement | null>(null) 
 
 	const toggleOpen = () => {
-		const newState = {...state}
+		const newState = {...menuState}
 		newState.open = !newState.open
-		setState(newState)
+		setMenuState(newState)
 	}
 
 	useEffect (() => {
 		const handleDocumentClick = (event: MouseEvent) => {
-			if (state.open && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+			if (!menuState.open) return;
+			if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
 				toggleOpen()
 			}
 		}
@@ -66,37 +69,37 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 		return () => {
 			document.removeEventListener('mousedown', handleDocumentClick)
 		}
-	}, [containerRef.current])
+	}, [containerRef.current, menuState.open])
 	
 
 	const changeFont = (newFont: OptionType) => {
-		const newState = {...state}
+		const newState = {...menuState}
 		newState.selectedFontFamily = newFont
-		setState(newState)
+		setMenuState(newState)
 	}
 
 	const changeFontSize = (newFontSize: OptionType) => {
-		const newState = {...state}
+		const newState = {...menuState}
 		newState.selectedFontSize = newFontSize
-		setState(newState)
+		setMenuState(newState)
 	}
 
 	const changeFontColor = (newFontColor: OptionType) => {
-		const newState = {...state}
+		const newState = {...menuState}
 		newState.selectedFontColor = newFontColor
-		setState(newState)
+		setMenuState(newState)
 	}
 
 	const changeBackgroundColor = (newBackgroundColor: OptionType) => {
-		const newState = {...state}
+		const newState = {...menuState}
 		newState.selectedBackgroundColor = newBackgroundColor
-		setState(newState)
+		setMenuState(newState)
 	}
 
 	const changeContentWidth = (newContentWidth: OptionType) => {
-		const newState = {...state}
+		const newState = {...menuState}
 		newState.selectedContentWidth = newContentWidth
-		setState(newState)
+		setMenuState(newState)
 	}
 
 	const handleChange = (fromState: ArticleParamsState) => {
@@ -114,14 +117,14 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault()
 
-		handleChange(state)
+		handleChange(menuState)
 		toggleOpen()
 	}
 
 	const handleReset = () => {
 		const newState = defaultState()
 		newState.open = false
-		setState(newState)
+		setMenuState(newState)
 
 		handleChange(newState)
 	}
@@ -129,15 +132,18 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	return (
 		<Fragment>
 			<div ref={containerRef}>
-				<ArrowButton onClick={toggleOpen} open={state.open}/>
-				<aside className={styles.container + (state.open ? ' ' + styles.container_open : '')}>
+				<ArrowButton onClick={toggleOpen} open={menuState.open}/>
+				<aside className={clsx(styles.container, { [styles.container_open]: menuState.open})}>
 					<form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
-						<Select  options={fontFamilyOptions} placeholder='' selected={state.selectedFontFamily} onChange={changeFont} onClose={undefined} title='Шрифт'/>
-						<RadioGroup name='Sasha' options={fontSizeOptions} selected={state.selectedFontSize} onChange={changeFontSize} title='Размер шрифта'/>
-						<Select  options={fontColors} placeholder='' selected={state.selectedFontColor} onChange={changeFontColor} onClose={undefined} title='Цвет шрифта'/>
+						<Text as='h1' size={31} weight={800} uppercase>
+							Задайте параметры
+						</Text>
+						<Select  options={fontFamilyOptions} placeholder='' selected={menuState.selectedFontFamily} onChange={changeFont} onClose={undefined} title='Шрифт'/>
+						<RadioGroup name='Sasha' options={fontSizeOptions} selected={menuState.selectedFontSize} onChange={changeFontSize} title='Размер шрифта'/>
+						<Select  options={fontColors} placeholder='' selected={menuState.selectedFontColor} onChange={changeFontColor} onClose={undefined} title='Цвет шрифта'/>
 						<Separator />
-						<Select  options={backgroundColors} placeholder='' selected={state.selectedBackgroundColor} onChange={changeBackgroundColor} onClose={undefined} title='Цвет фона'/>
-						<Select  options={contentWidthArr} placeholder='' selected={state.selectedContentWidth} onChange={changeContentWidth} onClose={undefined} title='Ширина контента'/>
+						<Select  options={backgroundColors} placeholder='' selected={menuState.selectedBackgroundColor} onChange={changeBackgroundColor} onClose={undefined} title='Цвет фона'/>
+						<Select  options={contentWidthArr} placeholder='' selected={menuState.selectedContentWidth} onChange={changeContentWidth} onClose={undefined} title='Ширина контента'/>
 						<div className={styles.bottomContainer}>
 							<Button title='Сбросить' type='reset' />
 							<Button title='Применить' type='submit' />

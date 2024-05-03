@@ -13,7 +13,7 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
-	const [state,setState] = useState({
+	const [appState,setAppState] = useState({
 		fontFamily: defaultArticleState.fontFamilyOption.value,
 		fontSize: defaultArticleState.fontSizeOption.value,
 		fontColor: defaultArticleState.fontColor.value,
@@ -29,7 +29,7 @@ const App = () => {
 			bgColor: params.backgroundColor,
 		}
 		
-		setState(newState)
+		setAppState(newState)
 	}
 
 	return (
@@ -37,11 +37,11 @@ const App = () => {
 			className={clsx(styles.main)}
 			style={
 				{
-					'--font-family': state.fontFamily,
-					'--font-size': state.fontSize,
-					'--font-color': state.fontColor,
-					'--container-width': state.containerWidth,
-					'--bg-color': state.bgColor,
+					'--font-family': appState.fontFamily,
+					'--font-size': appState.fontSize,
+					'--font-color': appState.fontColor,
+					'--container-width': appState.containerWidth,
+					'--bg-color': appState.bgColor,
 				} as CSSProperties
 			}>
 			<ArticleParamsForm onChange={onChange}/>
