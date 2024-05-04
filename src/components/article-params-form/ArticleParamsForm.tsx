@@ -57,8 +57,8 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	}
 
 	useEffect (() => {
+		if (!menuState.open) return;
 		const handleDocumentClick = (event: MouseEvent) => {
-			if (!menuState.open) return;
 			if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
 				toggleOpen()
 			}
